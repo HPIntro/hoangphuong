@@ -21,7 +21,6 @@
     <ClCompile Include="GameOverScene.cpp">
       <Filter>Classes</Filter>
     </ClCompile>
-    <ClCompile Include="hhh.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -35,9 +34,6 @@
     </ClInclude>
     <ClInclude Include="GameOverScene.h">
       <Filter>Classes</Filter>
-    </ClInclude>
-    <ClInclude Include="hhh.h">
-      <Filter>win32</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

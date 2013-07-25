@@ -7,9 +7,9 @@ bool GameOverScene::init()
 {
 	if( CCScene::init() )
 	{
-		this->_layer = GameOverLayer::create();
-		this->_layer->retain();
-		this->addChild(_layer);
+		this->mLayer = GameOverLayer::create();
+		this->mLayer->retain();
+		this->addChild(mLayer);
 
 		return true;
 
@@ -24,10 +24,10 @@ bool GameOverScene::init()
 
 GameOverScene::~GameOverScene()
 {
-	if (_layer)
+	if (mLayer)
 	{
-		_layer->release();
-		_layer = NULL;
+		mLayer->release();
+		mLayer = NULL;
 	}
 }
 
@@ -36,11 +36,11 @@ bool GameOverLayer::init()
 	if ( CCLayerColor::initWithColor ( ccc4(255, 255, 255, 255) ))
 	{
 		CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-		this->_label = CCLabelTTF::create("", "Artial", 32);
-		_label->retain();
-		_label->setColor( ccc3(0, 0, 0) );
-		_label->setPosition(ccp(winSize.width/2, winSize.height/2));
-		this->addChild(_label);
+		this->mLabel = CCLabelTTF::create("", "Artial", 32);
+		mLabel->retain();
+		mLabel->setColor( ccc3(0, 0, 0) );
+		mLabel->setPosition(ccp(winSize.width/2, winSize.height/2));
+		this->addChild(mLabel);
 
 		this->runAction( CCSequence::create(
 			CCDelayTime::create(3),
@@ -63,10 +63,10 @@ void GameOverLayer::gameOverDone()
 
 GameOverLayer::~GameOverLayer()
 {
-	if(_label)
+	if(mLabel)
 	{
-		_label->release();
-		_label = NULL;
+		mLabel->release();
+		mLabel = NULL;
 	}
 }
 

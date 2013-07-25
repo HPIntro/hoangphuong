@@ -6,11 +6,11 @@
 class HelloWorld : public cocos2d::CCLayerColor
 {
 protected:
-	int _projectilesDestroyed;
+	int nProjectilesDestroyed;
 
 protected:
-	cocos2d::CCArray* _targets;
-	cocos2d::CCArray* _projectiles;
+	cocos2d::CCArray* mTargets;
+	cocos2d::CCArray* mProjectiles;
 
 public:
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
@@ -26,10 +26,10 @@ public:
    
 
 	void addTarget();
-	void spriteMoveFinished(CCNode* sender);
-	void gameLogic(float dt);
-	void ccTouchesEnded(cocos2d::CCSet* touches, cocos2d::CCEvent* event);
-	void update(float dt);
+	void spriteMoveFinished(CCNode* pSender);
+	void gameLogic(float pDt);
+	void ccTouchesEnded(cocos2d::CCSet* pTouches, cocos2d::CCEvent* pEvent);
+	void update(float pDt);
 	~HelloWorld();
 	HelloWorld();
 

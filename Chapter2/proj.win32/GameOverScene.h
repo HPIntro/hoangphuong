@@ -7,26 +7,26 @@
 class GameOverLayer : public cocos2d::CCLayerColor
 {
 public:
-	GameOverLayer():_label(NULL){};
+	GameOverLayer():mLabel(NULL){};
 	virtual ~GameOverLayer();
 	bool init();
 	CREATE_FUNC(GameOverLayer);
 
 	void gameOverDone();
 
-	CC_SYNTHESIZE_READONLY(cocos2d::CCLabelTTF*, _label, Label);
+	CC_SYNTHESIZE_READONLY(cocos2d::CCLabelTTF*, mLabel, Label);
 
 };
 
 class GameOverScene : public cocos2d::CCScene
 {
 public:
-	GameOverScene():_layer(NULL) {};
+	GameOverScene():mLayer(NULL) {};
 	~GameOverScene(void);
 	bool init();
 	CREATE_FUNC(GameOverScene);
 
-	CC_SYNTHESIZE_READONLY(GameOverLayer*, _layer, Layer);
+	CC_SYNTHESIZE_READONLY(GameOverLayer*, mLayer, Layer);
 };
 
 #endif

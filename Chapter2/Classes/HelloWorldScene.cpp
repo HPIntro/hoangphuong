@@ -10,13 +10,13 @@ USING_NS_CC;
 CCScene* HelloWorld::scene()
 {
     // 'scene' is an autorelease object
-    CCScene *scene = CCScene::create();
+    CCScene* scene = CCScene::create();
     
     // 'layer' is an autorelease object
-    HelloWorld *layer = HelloWorld::create();
+    HelloWorld* mLayer = HelloWorld::create();
 
     // add layer as a child to scene
-    scene->addChild(layer);
+    scene->addChild(mLayer);
 
     // return the scene
     return scene;
@@ -29,8 +29,8 @@ bool HelloWorld::init()
 		"background-music-aac.wav", true);
 
 
-	_targets = new CCArray;
-	_projectiles = new CCArray;
+	mTargets = new CCArray;
+	mProjectiles = new CCArray;
 
 	
     //////////////////////////////
@@ -107,7 +107,7 @@ void HelloWorld::addTarget()
 	CCSprite* target= CCSprite::create("Target.png",
 		CCRectMake(0, 0, 27, 40) );
 	target->setTag(1);
-	_targets->addObject(target);
+	mTargets->addObject(target);
 
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
 	int minY = target->getContentSize().height/2;
@@ -141,38 +141,38 @@ void HelloWorld::addTarget()
 
 }
 
-void HelloWorld::spriteMoveFinished(CCNode* sender)
+void HelloWorld::spriteMoveFinished(CCNode* pSender)
 {
-	CCSprite* sprite = (CCSprite *)sender;
+	CCSprite* sprite = (CCSprite *)pSender;
 	this->removeChild(sprite, true);
 
 	if (sprite->getTag() == 1)
 	{
-		// cpp with cocos2d-x
-		GameOverScene *gameOverScene = GameOverScene::create();
-		gameOverScene->getLayer()->getLabel()->setString("You Lose :[");
-		CCDirector::sharedDirector()->replaceScene(gameOverScene);    
-		_targets->removeObject(sprite);
+	    // cpp with cocos2d-x
+		GameOverScene *mGameOverScene = GameOverScene::create();
+		mGameOverScene->getLayer()->getLabel()->setString("You Lose :)))");
+		CCDirector::sharedDirector()->replaceScene(mGameOverScene);    
+		mTargets->removeObject(sprite);
 	}
 	else if (sprite->getTag() == 2)
 	{
-		_projectiles->removeObject(sprite);
+		mProjectiles->removeObject(sprite);
 	}
 }
 
-void HelloWorld::gameLogic(float dt)
+void HelloWorld::gameLogic(float pDt)
 {
 	this->addTarget();
 }
 
-void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
+void HelloWorld::ccTouchesEnded(CCSet* pTouches, CCEvent* pEvent)
 {
 	//music when fired
 	CocosDenshion::SimpleAudioEngine::sharedEngine()->playBackgroundMusic(
 		"background-music-aac.wav", true);
 
 	//touch
-	CCTouch* touch = (CCTouch*)( touches->anyObject() );
+	CCTouch* touch = (CCTouch*)( pTouches->anyObject() );
 	CCPoint location = touch->getLocationInView();
 	location = CCDirector::sharedDirector()->convertToGL(location);
 
@@ -181,9 +181,9 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
 	CCSprite *projectile = CCSprite::create("Projectile.png",
 		CCRectMake(0, 0, 20, 20));
 	
-	//add to projectiles array
+    //add to projectiles array
 	projectile->setTag(2);
-	_projectiles->addObject(projectile);
+	mProjectiles->addObject(projectile);
 
 	projectile->setPosition( ccp(20, winSize.height/2) );
 
@@ -218,35 +218,35 @@ void HelloWorld::ccTouchesEnded(CCSet* touches, CCEvent* event)
 
 HelloWorld::~HelloWorld()
 {
-	if (_targets)
+	if (mTargets)
 	{
-		_targets->release();
-		_targets = NULL;
+		mTargets->release();
+		mTargets = NULL;
 	}
 
-	if(_projectiles)
+	if(mProjectiles)
 	{
-		_projectiles->release();
-		_projectiles = NULL;
+		mProjectiles->release();
+		mProjectiles = NULL;
 	}
 }
 HelloWorld::HelloWorld()
 
 	
-	:_targets(NULL)
-	,_projectiles(NULL)
+	:mTargets(NULL)
+	,mProjectiles(NULL)
 {
-	_projectilesDestroyed = 0;
+	nProjectilesDestroyed = 0;
 }
 
-void HelloWorld::update(float dt)
+void HelloWorld::update(float pDt)
 {
 	CCArray* projectilesToDelete = new CCArray;
 	CCArray* targetsToDelete     = new CCArray;
 	CCObject* it = NULL;
 	CCObject* jt = NULL;
 
-	CCARRAY_FOREACH(_projectiles, it)
+	CCARRAY_FOREACH(mProjectiles, it)
 	{
 		CCSprite* projectile = dynamic_cast<CCSprite*>(it);
 		CCRect projectileRect = CCRectMake(
@@ -255,7 +255,7 @@ void HelloWorld::update(float dt)
 			projectile->getContentSize().width,
 			projectile->getContentSize().height);
 
-		CCARRAY_FOREACH(_targets, jt)
+		CCARRAY_FOREACH(mTargets, jt)
 		{
 			CCSprite* target = dynamic_cast<CCSprite*>(jt);
 			CCRect    targetRect = CCRectMake(
@@ -274,24 +274,24 @@ void HelloWorld::update(float dt)
 
 	CCARRAY_FOREACH(targetsToDelete, jt)
 	{
-		CCSprite *target = dynamic_cast<CCSprite*>(jt);
-		_targets->removeObject(target);
+		CCSprite* target = dynamic_cast<CCSprite*>(jt);
+		mTargets->removeObject(target);
 		this->removeChild(target, true);
 
 		//diem
-		_projectilesDestroyed++;
-		if (_projectilesDestroyed >= 5)
+		nProjectilesDestroyed++;
+		if (nProjectilesDestroyed >= 5)
 		{
-			GameOverScene *gameOverScene = GameOverScene::create();
-			gameOverScene->getLayer()->getLabel()->setString("YOU WIN!");
-			CCDirector::sharedDirector()->replaceScene(gameOverScene);
+			GameOverScene* mGameOverScene = GameOverScene::create();
+			mGameOverScene->getLayer()->getLabel()->setString("YOU WIN!");
+			CCDirector::sharedDirector()->replaceScene(mGameOverScene);
 		}
 	}
 
 	CCARRAY_FOREACH(projectilesToDelete, it)
 	{
 		CCSprite* projectile = dynamic_cast<CCSprite*>(it);
-		_projectiles->removeObject(projectile);
+		mProjectiles->removeObject(projectile);
 		this->removeChild(projectile, true);
 	}
 

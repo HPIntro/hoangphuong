@@ -16,6 +16,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     AppDelegate app;
     CCEGLView* eglView = CCEGLView::sharedOpenGLView();
     eglView->setViewName("Chapter2");
-    eglView->setFrameSize(480, 320);
+    eglView->setFrameSize(480, 500);
     return CCApplication::sharedApplication()->run();
 }
