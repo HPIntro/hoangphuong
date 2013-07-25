@@ -1,4 +1,5 @@
 #include "HelloWorldScene.h"
+#include "proj.win32\GameOverScene.h"
 //#include "GameOverScene.h"
 #include "SimpleAudioEngine.h"
 
@@ -148,9 +149,9 @@ void HelloWorld::spriteMoveFinished(CCNode* sender)
 	if (sprite->getTag() == 1)
 	{
 		// cpp with cocos2d-x
-		//GameOverScene *gameOverScene = GameOverScene::create();
-		//gameOverScene->getLayer()->getLabel()->setString("You Lose :[");
-		//CCDirector::sharedDirector()->replaceScene(gameOverScene);    
+		GameOverScene *gameOverScene = GameOverScene::create();
+		gameOverScene->getLayer()->getLabel()->setString("You Lose :[");
+		CCDirector::sharedDirector()->replaceScene(gameOverScene);    
 		_targets->removeObject(sprite);
 	}
 	else if (sprite->getTag() == 2)
@@ -231,10 +232,11 @@ HelloWorld::~HelloWorld()
 }
 HelloWorld::HelloWorld()
 
-	//_projectilesDestroyed = 0;
+	
 	:_targets(NULL)
 	,_projectiles(NULL)
 {
+	_projectilesDestroyed = 0;
 }
 
 void HelloWorld::update(float dt)
@@ -277,13 +279,13 @@ void HelloWorld::update(float dt)
 		this->removeChild(target, true);
 
 		//diem
-		//_projectilesDestroyed++;
-		//if (_projectilesDestroyed >= 5)
-		//{
-		//	//GameOverScene *gameOverScene = GameOverScene::create();
-		//	//GameOverScene->getLayer()->getLabel()->setString("YOU WIN!");
-		//	CCDirector::sharedDirector()->replaceScene(gameOverScene);
-		//}
+		_projectilesDestroyed++;
+		if (_projectilesDestroyed >= 5)
+		{
+			GameOverScene *gameOverScene = GameOverScene::create();
+			gameOverScene->getLayer()->getLabel()->setString("YOU WIN!");
+			CCDirector::sharedDirector()->replaceScene(gameOverScene);
+		}
 	}
 
 	CCARRAY_FOREACH(projectilesToDelete, it)

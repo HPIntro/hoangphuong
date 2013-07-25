@@ -42,11 +42,11 @@ bool GameOverLayer::init()
 		_label->setPosition(ccp(winSize.width/2, winSize.height/2));
 		this->addChild(_label);
 
-		this->runAction( (CCSequence::create(
+		this->runAction( CCSequence::create(
 			CCDelayTime::create(3),
 			CCCallFunc::create(this,
 			callfunc_selector(GameOverLayer::gameOverDone)),
-			NULL)));
+			NULL));
 
 		return true;
 	}

@@ -36,6 +36,8 @@
     <ClInclude Include="GameOverScene.h">
       <Filter>Classes</Filter>
     </ClInclude>
-    <ClInclude Include="hhh.h" />
+    <ClInclude Include="hhh.h">
+      <Filter>win32</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
