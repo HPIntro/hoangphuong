@@ -1,3 +1,14 @@
+/***************************************************************************
+*
+* ___main.cpp___
+* ___Chapter2___
+*
+* Created by ___NguyenHoangPhuong___ on ___25/7/2013___.
+*
+* Copyright Vinova Pte. Ltd. All rights reserved.
+***************************************************************************
+*/
+
 #include "main.h"
 #include "AppDelegate.h"
 #include "CCEGLView.h"

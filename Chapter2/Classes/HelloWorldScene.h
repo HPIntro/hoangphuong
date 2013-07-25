@@ -1,3 +1,14 @@
+/***************************************************************************
+*
+* ___HelloWorldScene.h___
+* ___Chapter2___
+*
+* Created by ___NguyenHoangPhuong___ on ___25/7/2013___.
+*
+* Copyright Vinova Pte. Ltd. All rights reserved.
+***************************************************************************
+*/
+
 #ifndef __HELLOWORLD_SCENE_H__
 #define __HELLOWORLD_SCENE_H__
 

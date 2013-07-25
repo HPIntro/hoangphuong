@@ -1,4 +1,14 @@
-//#pragma once
+/***************************************************************************
+*
+* ___GameOverScene.h___
+* ___Chapter2___
+*
+* Created by ___NguyenHoangPhuong___ on ___25/7/2013___.
+*
+* Copyright Vinova Pte. Ltd. All rights reserved.
+***************************************************************************
+*/
+
 #ifndef _GAME_OVER_SCENE_H_
 #define _GAME_OVER_SCENE_H_
 

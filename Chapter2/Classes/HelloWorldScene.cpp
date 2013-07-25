@@ -1,3 +1,14 @@
+/***************************************************************************
+*
+* ___HelloWorldScene.cpp___
+* ___Chapter2___
+*
+* Created by ___NguyenHoangPhuong___ on ___25/7/2013___.
+*
+* Copyright Vinova Pte. Ltd. All rights reserved.
+***************************************************************************
+*/
+
 #include "HelloWorldScene.h"
 #include "proj.win32\GameOverScene.h"
 //#include "GameOverScene.h"
