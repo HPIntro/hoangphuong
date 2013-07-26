@@ -1,3 +1,14 @@
+/***************************************************************************
+*
+* ___CCParallaxNodeExtras.cpp___
+* ___SpaceGame___
+*
+* Created by ___NguyenHoangPhuong___ on ___25/07/2013___.
+*
+* Copyright Vinova Pte. Ltd. All rights reserved.
+***************************************************************************
+*/
+
 #include "CCParallaxNodeExtras.h"
 
 //Access CCPointObject
@@ -19,7 +30,7 @@ CCParallaxNodeExtras* CCParallaxNodeExtras::node() {
 void CCParallaxNodeExtras::incrementOffset(CCPoint pOffset,CCNode* pNode){
     for( unsigned int i = 0; i < m_pParallaxArray->num; i++) {
         CCPointObject *point = (CCPointObject *)m_pParallaxArray->arr[i];
-        CCNode * curNode = point->getChild();
+        CCNode* curNode = point->getChild();
         if( curNode->isEqual(pNode) ) {
             point->setOffset( ccpAdd(point->getOffset(), pOffset) );
             break;

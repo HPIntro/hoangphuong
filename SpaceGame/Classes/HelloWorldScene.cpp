@@ -19,7 +19,7 @@ CCScene* HelloWorld::scene()
     CCScene *scene = CCScene::create();
     
     // 'layer' is an autorelease object
-    HelloWorld *layer = HelloWorld::create();
+    HelloWorld* layer = HelloWorld::create();
 
     // add layer as a child to scene
     scene->addChild(layer);
@@ -31,63 +31,12 @@ CCScene* HelloWorld::scene()
 // on "init" you need to initialize your instance
 bool HelloWorld::init()
 {
- //   //////////////////////////////
- //   // 1. super init first
- //   if ( !CCLayer::init() )
- //   {
- //       return false;
- //   }
- //   
- //   CCSize visibleSize = CCDirector::sharedDirector()->getVisibleSize();
- //   CCPoint origin = CCDirector::sharedDirector()->getVisibleOrigin();
+ 
 
- //   /////////////////////////////
- //   // 2. add a menu item with "X" image, which is clicked to quit the program
- //   //    you may modify it.
+	//srand(time(0));
 
- //   // add a "close" icon to exit the progress. it's an autorelease object
- //   CCMenuItemImage *pCloseItem = CCMenuItemImage::create(
- //                                       "CloseNormal.png",
- //                                       "CloseSelected.png",
- //                                       this,
- //                                       menu_selector(HelloWorld::menuCloseCallback));
- //   
-	//pCloseItem->setPosition(ccp(origin.x + visibleSize.width - pCloseItem->getContentSize().width/2 ,
- //                               origin.y + pCloseItem->getContentSize().height/2));
-
- //   // create menu, it's an autorelease object
- //   CCMenu* pMenu = CCMenu::create(pCloseItem, NULL);
- //   pMenu->setPosition(CCPointZero);
- //   this->addChild(pMenu, 1);
-
- //   /////////////////////////////
- //   // 3. add your codes below...
-
- //   // add a label shows "Hello World"
- //   // create and initialize a label
- //   
- //   CCLabelTTF* pLabel = CCLabelTTF::create("Hello World", "Arial", 24);
- //   
- //   // position the label on the center of the screen
- //   pLabel->setPosition(ccp(origin.x + visibleSize.width/2,
- //                           origin.y + visibleSize.height - pLabel->getContentSize().height));
-
- //   // add the label as a child to this layer
- //   this->addChild(pLabel, 1);
-
- //   // add "HelloWorld" splash screen"
- //   CCSprite* pSprite = CCSprite::create("HelloWorld.png");
-
- //   // position the sprite on the center of the screen
- //   pSprite->setPosition(ccp(visibleSize.width/2 + origin.x, visibleSize.height/2 + origin.y));
-
- //   // add the sprite as a child to this layer
- //   this->addChild(pSprite, 0);
- //   
- //   return true;
-
-	
-
+	mNextAsteroid = 0;
+	mNextShipLaser = 0;
 	//Sprite
 	mBatchNode = CCSpriteBatchNode::create("Sprites.pvr.ccz");
 	this->addChild(mBatchNode);
@@ -133,6 +82,25 @@ bool HelloWorld::init()
 	HelloWorld::addChild(CCParticleSystemQuad::create("Stars2.plist"));
 	HelloWorld::addChild(CCParticleSystemQuad::create("Stars3.plist"));
 
+	#define KNUMASTEROIDS 15
+	mAsteroids = new CCArray();
+	for(int i = 0; i < KNUMASTEROIDS; ++i) {
+		CCSprite* asteroid = CCSprite::createWithSpriteFrameName("asteroid.png");
+		asteroid->setVisible(false);
+		mBatchNode->addChild(asteroid);
+		mAsteroids->addObject(asteroid);
+	}
+
+	#define KNUMLASERS 2
+	mShipLasers = new CCArray();
+	for ( int i = 0; i < KNUMLASERS; ++i){
+		CCSprite* shipLaser = CCSprite::createWithSpriteFrameName("laserbeam_blue.png");
+		shipLaser->setVisible(false);
+		mBatchNode->addChild(shipLaser);
+		mShipLasers->addObject(shipLaser);
+	}
+
+	this->setTouchEnabled(true);
 	this->scheduleUpdate();
 	this->setAccelerometerEnabled(true);
 
@@ -159,7 +127,7 @@ void HelloWorld::update(float pDt)
 	CCArray* spaceDusts = CCArray::createWithCapacity(2);
 	spaceDusts->addObject(mSpacedust1);
 	spaceDusts->addObject(mSpacedust2);
-	for ( int ii = 0; ii <spaceDusts->count(); ii++ ) {
+	for ( int ii = 0; ii < spaceDusts->count(); ii++ ) {
 		CCSprite* spaceDust = (CCSprite*)(spaceDusts->objectAtIndex(ii));
 		float xPosition = mBackgroundNode->convertToWorldSpace(spaceDust->getPosition()).x;
 		float size = spaceDust->getContentSize().width;
@@ -183,14 +151,57 @@ void HelloWorld::update(float pDt)
 	}
 
 	//Moving the Ship
-	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+	/*CCSize winSize = CCDirector::sharedDirector()->getWinSize();
 	float maxY = winSize.height - mShip->getContentSize().height/2;
 	float minY = mShip->getContentSize().height/2;
 	float diff = (mShipPointsPerSecY * pDt);
 	float newY = mShip->getPosition().y + diff;
 	newY = MIN(MAX(newY, minY), maxY);
-	mShip->setPosition(ccp(mShip->getPosition().x, newY));
+	mShip->setPosition(ccp(mShip->getPosition().x, newY));*/
 
+	//Stone
+	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+	float curTime = getTimeTick();
+	if (curTime > mNextAsteroidSpawn) {
+ 
+		float randSecs = randomValueBetween(0.20,1.0) * 10000;
+		mNextAsteroidSpawn = randSecs + curTime;
+ 
+		float randY = randomValueBetween(0.0,winSize.height);
+		float randDuration = randomValueBetween(2.0,20.0) * 3;
+ 
+		CCSprite* asteroid = (CCSprite *)mAsteroids->objectAtIndex(mNextAsteroid);
+
+		mNextAsteroid++;
+		//CCLog("%d", mNextAsteroid);
+
+		if (mNextAsteroid >= mAsteroids->count())
+			mNextAsteroid = 0;
+	
+        asteroid->stopAllActions();
+		asteroid->setVisible(true);
+		asteroid->setPosition( ccp(winSize.width+asteroid->getContentSize().width/2, randY));
+
+		asteroid->runAction(CCSequence::create(CCMoveBy::create(randDuration, 
+			ccp(-winSize.width-asteroid->getContentSize().width * 4, randY)), 
+			CCCallFuncN::create(this, callfuncN_selector(HelloWorld::setInvisible)),
+			NULL
+		 ));     
+ 
+	}
+
+	//Fire
+	/*CCSprite* shipLaser = (CCSprite*)mShipLasers->objectAtIndex(mNextShipLaser++);
+	if( mNextShipLaser >= mShipLasers->count() )
+		mNextShipLaser = 0;
+
+	shipLaser->setPosition( ccpAdd( mShip->getPosition(), ccp(shipLaser->getContentSize().width/2, 0)));
+    shipLaser->setVisible(true);
+    shipLaser->stopAllActions();
+    shipLaser->runAction(CCSequence::create(CCMoveBy::create(0.5,ccp(winSize.width, 0)), 
+		CCCallFuncN::create(this, callfuncN_selector(HelloWorld::setInvisible)), 
+		NULL  
+    ));*/
 
 }
 
@@ -214,7 +225,11 @@ void HelloWorld::didAccelerate(CCAcceleration* pAccelerationValue)
 
 float HelloWorld::randomValueBetween(float pLow, float pHigh)
 {
-	return (((float) rand() / 0xFFFFFFFFu) * (pHigh - pLow)) + pLow;
+	/*float rangeY= pHigh - pLow;
+	float ran = ( (float)rand() / rangeY) + pLow;
+	retur*///n  rand();
+	
+	return (((float) rand() / 0xFFFFFFu) * (pHigh - pLow)* (pHigh - pLow)) + pLow;
 
 }
 
@@ -224,4 +239,58 @@ float HelloWorld::getTimeTick()
 	gettimeofday(&time, NULL);
 	unsigned long millisecs = (time.tv_sec * 1000) + (time.tv_usec/1000);
     return (float) millisecs;
+}
+
+void HelloWorld::setInvisible(CCNode * pNode) {
+    pNode->setVisible(false);
+}
+
+
+
+//void HelloWorld::ccTouchesBegan(cocos2d::CCSet* pTouches, cocos2d::CCEvent* pEvent)
+//{
+//	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+//
+//	CCSprite* shipLaser = (CCSprite*)mShipLasers->objectAtIndex(mNextShipLaser++);
+//	if( mNextShipLaser >= mShipLasers->count() )
+//		mNextShipLaser = 0;
+//
+//	shipLaser->setPosition( ccpAdd( mShip->getPosition(), ccp(shipLaser->getContentSize().width/2, 0)));
+//    shipLaser->setVisible(true);
+//    shipLaser->stopAllActions();
+//    shipLaser->runAction(CCSequence::create(CCMoveBy::create(0.5,ccp(winSize.width, 0)), 
+//		CCCallFuncN::create(this, callfuncN_selector(HelloWorld::setInvisible)), 
+//		NULL  
+//    ));
+//}
+
+
+
+void HelloWorld::ccTouchesMoved(cocos2d::CCSet* pTouches, cocos2d::CCEvent* pEvent)
+{
+	//Move Ship
+	CCTouch* touch = (CCTouch*) pTouches->anyObject();
+	CCPoint locat = touch->getLocationInView();
+
+	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+	float maxY = winSize.height - mShip->getContentSize().height/2;
+	float minY = mShip->getContentSize().height/2;
+	float diff = (mShipPointsPerSecY * locat.y);
+	float newY = mShip->getPosition().y + diff;
+	newY = MIN(MAX(newY, minY), maxY);
+
+	mShip->setPosition(ccp(mShip->getPosition().x, winSize.height - locat.y));
+
+	//Fire
+	CCSprite* shipLaser = (CCSprite*)mShipLasers->objectAtIndex(mNextShipLaser++);
+	if( mNextShipLaser >= mShipLasers->count() )
+		mNextShipLaser = 0;
+
+	shipLaser->setPosition( ccpAdd( mShip->getPosition(), ccp(shipLaser->getContentSize().width/2, 0)));
+    shipLaser->setVisible(true);
+    shipLaser->stopAllActions();
+    shipLaser->runAction(CCSequence::create(CCMoveBy::create(0.5,ccp(winSize.width, 0)), 
+		CCCallFuncN::create(this, callfuncN_selector(HelloWorld::setInvisible)), 
+		NULL  
+    ));
 }

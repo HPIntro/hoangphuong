@@ -1,3 +1,14 @@
+/***************************************************************************
+*
+* ___main.cpp___
+* ___SpaceGame___
+*
+* Created by ___NguyenHoangPhuong___ on ___25/07/2013___.
+*
+* Copyright Vinova Pte. Ltd. All rights reserved.
+***************************************************************************
+*/
+
 #include "main.h"
 #include "AppDelegate.h"
 #include "CCEGLView.h"
@@ -16,6 +27,6 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     AppDelegate app;
     CCEGLView* eglView = CCEGLView::sharedOpenGLView();
     eglView->setViewName("SpaceGame");
-    eglView->setFrameSize(480, 320);
+    eglView->setFrameSize(680, 500);
     return CCApplication::sharedApplication()->run();
 }

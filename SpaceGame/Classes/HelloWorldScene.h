@@ -36,11 +36,16 @@ private:
 	float mShipPointsPerSecY;
 
 	CCArray* mAsteroids;
-	int mNextAsteroids;
+	int mNextAsteroid;
 	float mNextAsteroidSpawn;
 
+	CCArray* mShipLasers;
+	int mNextShipLaser;
 
 public:
+	//virtual void ccTouchesBegan(cocos2d::CCSet* pTouches, cocos2d::CCEvent* pEvent);
+	void HelloWorld::ccTouchesMoved(cocos2d::CCSet* pTouches, cocos2d::CCEvent* pEvent);
+
 	float randomValueBetween(float pLow, float pHigh);
 	void  setInvisible(CCNode* node);
 	float getTimeTick();
