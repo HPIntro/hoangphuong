@@ -19,6 +19,11 @@ USING_NS_CC;
 
 class HelloWorld : public cocos2d::CCLayer
 {
+	typedef enum {
+	  KENDREASONWIN,
+	  KENDREASONLOSE
+	} EndReason;
+
 private:
 	CCParallaxNodeExtras* mBackgroundNode;
 	CCSprite* mSpacedust1;
@@ -41,6 +46,15 @@ private:
 
 	CCArray* mShipLasers;
 	int mNextShipLaser;
+
+	int mLives;
+
+	//Win or lose
+	double mGameOverTime;
+	bool mGameOver;
+
+	void endScene(EndReason endReason);
+	void restartTapped(CCObject* pObj);
 
 public:
 	//virtual void ccTouchesBegan(cocos2d::CCSet* pTouches, cocos2d::CCEvent* pEvent);

@@ -10,7 +10,9 @@
 */
 
 #include "HelloWorldScene.h"
+#include "SimpleAudioEngine.h"
 
+using namespace CocosDenshion;
 USING_NS_CC;
 
 CCScene* HelloWorld::scene()
@@ -31,8 +33,11 @@ CCScene* HelloWorld::scene()
 // on "init" you need to initialize your instance
 bool HelloWorld::init()
 {
- 
-
+	//Game over
+	mLives = 3;
+	double curTime = getTimeTick();
+	mGameOverTime = curTime + 30000;
+	mGameOver = false;
 	//srand(time(0));
 
 	mNextAsteroid = 0;
@@ -100,6 +105,10 @@ bool HelloWorld::init()
 		mShipLasers->addObject(shipLaser);
 	}
 
+	SimpleAudioEngine::sharedEngine()->playBackgroundMusic("SpaceGame.wav",true);
+	SimpleAudioEngine::sharedEngine()->preloadEffect("explosion_large.wav");
+	SimpleAudioEngine::sharedEngine()->preloadEffect("laser_ship.wav");
+
 	this->setTouchEnabled(true);
 	this->scheduleUpdate();
 	this->setAccelerometerEnabled(true);
@@ -161,11 +170,11 @@ void HelloWorld::update(float pDt)
 
 	//Stone
 	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
-	float curTime = getTimeTick();
-	if (curTime > mNextAsteroidSpawn) {
+	float curTimeMillis = getTimeTick();
+	if (curTimeMillis > mNextAsteroidSpawn) {
  
-		float randSecs = randomValueBetween(0.20,1.0) * 10000;
-		mNextAsteroidSpawn = randSecs + curTime;
+		float randSecs = randomValueBetween(0.20,1.0) * 1000;
+		mNextAsteroidSpawn = randSecs + curTimeMillis;
  
 		float randY = randomValueBetween(0.0,winSize.height);
 		float randDuration = randomValueBetween(2.0,20.0) * 3;
@@ -190,18 +199,39 @@ void HelloWorld::update(float pDt)
  
 	}
 
-	//Fire
-	/*CCSprite* shipLaser = (CCSprite*)mShipLasers->objectAtIndex(mNextShipLaser++);
-	if( mNextShipLaser >= mShipLasers->count() )
-		mNextShipLaser = 0;
+	CCObject* asteroids;
+	CCObject* shipLaze;
 
-	shipLaser->setPosition( ccpAdd( mShip->getPosition(), ccp(shipLaser->getContentSize().width/2, 0)));
-    shipLaser->setVisible(true);
-    shipLaser->stopAllActions();
-    shipLaser->runAction(CCSequence::create(CCMoveBy::create(0.5,ccp(winSize.width, 0)), 
-		CCCallFuncN::create(this, callfuncN_selector(HelloWorld::setInvisible)), 
-		NULL  
-    ));*/
+	CCARRAY_FOREACH(mAsteroids, asteroids){
+		if( !((CCSprite*)asteroids)->isVisible() ){
+			continue;
+		}
+		CCARRAY_FOREACH(mShipLasers, shipLaze){
+			if( !((CCSprite*)shipLaze)->isVisible()){
+				continue;
+			}
+			if( ((CCSprite*)shipLaze)->boundingBox().intersectsRect( ((CCSprite*)asteroids)->boundingBox() ) ){
+				((CCSprite*)shipLaze)->setVisible(false);
+				((CCSprite*)asteroids)->setVisible(false);
+				SimpleAudioEngine::sharedEngine()->playEffect("explosion_large.wav");
+				continue;
+			}
+		}
+
+		if(mShip->boundingBox().intersectsRect( ((CCSprite*)asteroids)->boundingBox() )){
+			((CCSprite*)asteroids)->setVisible(false);
+			mShip->runAction( CCBlink::create(1.0, 9));
+			mLives--;
+		}
+	}
+
+	if (mLives <= 0) {
+		mShip->stopAllActions();
+		mShip->setVisible(false);
+		this->endScene(KENDREASONLOSE);
+	} else if (curTimeMillis  >= mGameOverTime) {
+		this->endScene(KENDREASONWIN);
+	}
 
 }
 
@@ -268,6 +298,8 @@ void HelloWorld::setInvisible(CCNode * pNode) {
 
 void HelloWorld::ccTouchesMoved(cocos2d::CCSet* pTouches, cocos2d::CCEvent* pEvent)
 {
+	SimpleAudioEngine::sharedEngine()->playEffect("laser_ship.wav");
+
 	//Move Ship
 	CCTouch* touch = (CCTouch*) pTouches->anyObject();
 	CCPoint locat = touch->getLocationInView();
@@ -293,4 +325,53 @@ void HelloWorld::ccTouchesMoved(cocos2d::CCSet* pTouches, cocos2d::CCEvent* pEve
 		CCCallFuncN::create(this, callfuncN_selector(HelloWorld::setInvisible)), 
 		NULL  
     ));
+}
+
+void HelloWorld::restartTapped(CCObject* pObj)
+{
+	CCDirector::sharedDirector()->replaceScene(
+		CCTransitionZoomFlipX::create(0.5, this->scene() ));
+	this->scheduleUpdate();
+}
+
+void HelloWorld::endScene( EndReason endReason)
+{
+	if( mGameOver)
+		return;
+	mGameOver = true;
+	
+	CCSize winSize = CCDirector::sharedDirector()->getWinSize();
+	char message[10] = "You Win";
+	if( endReason == KENDREASONLOSE) 
+		strcpy(message, "YOU LOSE");
+
+	CCLabelBMFont* label;
+	label = CCLabelBMFont::create(message, "Arial.fnt");
+	label->setScale(0.1);
+
+	label->setPosition( ccp(winSize.width/2, winSize.height * 0.4));
+	this->addChild(label);
+
+	CCLabelBMFont* restartLabel;
+	strcpy(message, "Restart");
+	restartLabel = CCLabelBMFont::create(message, "Arial.fnt");
+
+	CCMenuItemLabel* restartItem = CCMenuItemLabel::create(restartLabel, this,
+		menu_selector(HelloWorld::restartTapped) );
+
+	restartItem->setScale(0.1);
+	restartItem->setPosition( ccp(winSize.width/2, winSize.height * 0.6));
+
+	//add menu
+	CCMenu* menu = CCMenu::create(restartItem, NULL);
+	menu->setPosition(CCPointZero);
+	this->addChild(menu);
+
+	restartItem->runAction(CCScaleTo::create(0.5, 1.0) );
+	label->runAction(CCScaleTo::create(0.5, 1.0) );
+
+	this->unscheduleUpdate();
+
+
+
 }
